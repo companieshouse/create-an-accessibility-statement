@@ -1,0 +1,98 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Accessibility issues added – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({ text: "Back", href: "javascript:window.history.back()" }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">
+      Accessibility issues added
+    </h1>
+
+    {% if (data.failedCriteria or []).length == 0 %}
+      <p class="govuk-body">
+        You have not added any issues yet.
+      </p>
+
+      {{ govukButton({
+        text: "Add an issue",
+        href: "/failed-criteria",
+        classes: "govuk-button"
+      }) }}
+
+    {% else %}
+
+      {% for item in data.failedCriteria %}
+        <h2 class="govuk-heading-m">
+          Issue {{ loop.index }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: [
+            {
+              key: { text: "Description" },
+              value: { text: item.description },
+              actions: {
+                items: [
+                  {
+                    href: "/failed-criteria/edit/" + loop.index0,
+                    text: "Change",
+                    visuallyHiddenText: "description for issue " + loop.index
+                  }
+                ]
+              }
+            },
+            {
+              key: { text: "WCAG criterion" },
+              value: { text: item.wcagText },
+              actions: {
+                items: [
+                  {
+                    href: "/failed-criteria/edit/" + loop.index0,
+                    text: "Change",
+                    visuallyHiddenText: "WCAG criterion for issue " + loop.index
+                  }
+                ]
+              }
+            },
+            {
+              key: { text: "Remove" },
+              value: { text: "" },
+              actions: {
+                items: [
+                  {
+                    href: "/failed-criteria/remove/" + loop.index0,
+                    text: "Remove",
+                    visuallyHiddenText: "issue " + loop.index
+                  }
+                ]
+              }
+            }
+          ]
+        }) }}
+      {% endfor %}
+
+      {{ govukButton({
+        text: "Add another issue",
+        href: "/failed-criteria"
+      }) }}
+
+      {{ govukButton({
+        text: "Continue",
+        href: "/publish-date",
+        classes: "govuk-button--secondary"
+      }) }}
+
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

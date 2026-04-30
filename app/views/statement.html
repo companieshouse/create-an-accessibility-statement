@@ -1,0 +1,325 @@
+{% extends "layouts/main.html" %}
+
+{% set monthNames = {
+  "1": "January",
+  "2": "February",
+  "3": "March",
+  "4": "April",
+  "5": "May",
+  "6": "June",
+  "7": "July",
+  "8": "August",
+  "9": "September",
+  "01": "January",
+  "02": "February",
+  "03": "March",
+  "04": "April",
+  "05": "May",
+  "06": "June",
+  "07": "July",
+  "08": "August",
+  "09": "September",
+  "10": "October",
+  "11": "November",
+  "12": "December"
+} %}
+
+{% block pageTitle %}
+  Your accessibility statement – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
+    {{ govukPanel({
+  titleText: "Accessibility statement created"
+}) }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
+        <p class="govuk-body">This is your draft accessibility statement for '{{data.serviceName}}'.</p>
+    <p class="govuk-body">You must read and check the statement <strong>carefully</strong> before giving it to developers or publishing it.</p>
+  </div>
+</div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="govuk-tabs" data-module="govuk-tabs">
+      <h2 class="govuk-tabs__title">Contents</h2>      
+      <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+          <a class="govuk-tabs__tab" href="#preview">Preview</a>
+        </li>
+        <li class="govuk-tabs__list-item">
+          <a class="govuk-tabs__tab" href="#html">HTML</a>
+        </li>
+        <li class="govuk-tabs__list-item">
+          <a class="govuk-tabs__tab" href="#markdown">Markdown</a>
+        </li>
+      </ul>
+      <!-- PREVIEW TAB -->
+      <div class="govuk-tabs__panel" id="preview">
+        <button type="button" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-4" data-module="copy-preview">Copy preview to clipboard</button>
+        <article class="statement-preview" id="statement-content">
+          <h1 class="govuk-heading-xl">
+            Accessibility statement for {{ data.serviceName }}
+          </h1>
+          <section class="govuk-!-margin-bottom-9 ">
+            <p class="govuk-body">
+              This accessibility statement applies to the '{{ data.serviceName }}' service.
+            </p>
+            <p class="govuk-body">This website is run by Companies House. We want as many people as possible to be able to use this website. For example, that means you should be able to:</p>
+            <ul class="govuk-list govuk-list--bullet">
+              <li>change colours, contrast levels and fonts using browser or device settings</li>
+              <li>zoom in up to 400% without the text spilling off the screen</li>
+              <li>navigate most of the website using a keyboard or speech recognition software</li>
+              <li>listen to most of the website using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)</li>
+            </ul>
+            <p class="govuk-body">We've also made the website text as simple as possible to understand.</p>
+            <p><a rel="external" href="https://mcmw.abilitynet.org.uk/">AbilityNet</a> has advice on making your device easier to use if you have a disability.</p>
+          </section>            
+          {% if data.plainEnglishIssues %}
+             <section class="govuk-!-margin-bottom-9 ">
+              <h2 class="govuk-heading-l">
+                How accessible this website is
+              </h2>
+              <p class="govuk-body">We know some parts of this website are not fully accessible:</p>
+
+            {% set lines = data.plainEnglishIssues.split('\n') %}
+            {% set inList = false %}
+
+            {% for line in lines %}
+              {% set trimmed = line.trim() %}
+
+              {% if trimmed.startsWith('- ') %}
+                {% if not inList %}
+                  <ul class="govuk-list govuk-list--bullet">
+                  {% set inList = true %}
+                {% endif %}
+                <li>{{ trimmed.substring(2) }}</li>
+
+              {% else %}
+                {% if inList %}
+                  </ul>
+                  {% set inList = false %}
+                {% endif %}
+
+                {% if trimmed %}
+                  <p class="govuk-body">{{ trimmed }}</p>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if inList %}
+              </ul>
+            {% endif %}
+          {% endif %}
+
+             </section>
+
+             <section class="govuk-!-margin-bottom-9 ">
+              <h2 class="govuk-heading-l">
+                Feedback and contact information
+              </h2>
+              <p class="govuk-body">We're always looking to improve the accessibility of our services. If you find any problems not listed on this page or have difficulty using any part of this service, <a class="govuk-link" href="https://www.gov.uk/find-contact-details-companies-house">contact Companies House</a>.
+              </p>
+             </section>             
+             <section class="govuk-!-margin-bottom-9 ">
+              <h2 class="govuk-heading-l">Enforcement procedure</h2>             
+              <p class="govuk-body">The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the 'accessibility regulations'). If you're not happy with how we respond to your complaint, <a class="govuk-link" href="https://www.equalityadvisoryservice.com/">contact the Equality Advisory and Support Service (EASS)</a>.
+              </p>
+          </section>
+
+            <section class="govuk-!-margin-bottom-9">
+            <h2 class="govuk-heading-l">Technical information about this website's accessibility</h2>
+            <p class="govuk-body">Companies House is committed to making its website accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.</p>
+            
+            
+          {% set hasNonCompliances = data.failedCriteria and data.failedCriteria.length %}
+          {% set hasExemptions = data.outOfScopeDetails or data.disproportionateBurdenDetails %}
+
+          {% if hasNonCompliances and hasExemptions %}
+            {% set issueSummary = "the non-compliances and exemptions" %}
+          {% elseif hasNonCompliances %}
+            {% set issueSummary = "the non-compliances" %}
+          {% elseif hasExemptions %}
+            {% set issueSummary = "the exemptions" %}
+          {% endif %}
+
+            
+            <h3 class="gov-uk-heading-m">Compliance status</h3>
+            <p class="govuk-body">This website has been tested against the Web Content Accessibility Guidelines (WCAG) 2.2 AA standard.</p>
+            
+          {% if data.complianceStatus == "pass" %}
+            <p class="govuk-body">
+              This website is fully compliant with the Web Content Accessibility Guidelines version 2.2 AA standard.
+            </p>
+
+          {% elseif data.complianceStatus == "partial" %}
+            <p class="govuk-body">
+              This website is partially compliant with the Web Content Accessibility Guidelines version 2.2 AA standard, due to {{ issueSummary }} listed below.
+            </p>
+
+          {% elseif data.complianceStatus == "fail" %}
+            <p class="govuk-body">
+              This website is not compliant with the Web Content Accessibility Guidelines version 2.2 AA standard. The {{ issueSummary }} are listed below.
+            </p>
+          {% endif %}
+
+          </section>
+
+            {% if data.failedCriteria.length or data.disproportionateBurdenDetails or data.outOfScopeDetails %}
+            <section class="govuk-!-margin-bottom-9">
+            <h2 class="govuk-heading-l">
+              Non-accessible content
+            </h2>
+
+            <p class="govuk-body">
+              The content listed below is non-accessible for the following reasons.
+            </p>
+
+
+          {% if data.failedCriteria and data.failedCriteria.length %}
+            <h3 class="govuk-heading-m">
+              Non-compliance with the accessibility regulations
+            </h3>
+          <ul class="govuk-list govuk-list--bullet">
+            {% for issue in data.failedCriteria %}
+            
+              <li>
+                {{ issue.description }}. This does not meet WCAG 2.2 success criterion {{ issue.wcagText }}
+              </li>
+            
+            {% endfor %}
+            </ul>
+          {% endif %}
+
+
+          {% if data.outOfScopeDetails %}
+            <h3 class="govuk-heading-m">
+              Content that's not within the scope of the accessibility regulations
+            </h3>
+
+            {% for paragraph in data.outOfScopeDetails.split('\n') %}
+              <p class="govuk-body">
+                {{ paragraph }}
+              </p>
+            {% endfor %}
+          {% endif %}
+
+
+          {% if data.disproportionateBurdenDetails %}
+            <h3 class="govuk-heading-m">
+              Disproportionate burden
+            </h3>
+
+            {% for paragraph in data.disproportionateBurdenDetails.split('\n') %}
+              <p class="govuk-body">
+                {{ paragraph }}
+              </p>
+            {% endfor %}
+          {% endif %}
+
+            </section>
+          {% endif %}
+
+            
+          <section class="govuk-!-margin-bottom-9">
+            <h2 class="govuk-heading-l">
+              Preparation of this accessibility statement
+            </h2>
+
+
+          {% if data.hasExistingStatement == "yes" %}
+            <p class="govuk-body">
+              This statement was prepared on {{ data['firstPublishedDate-day'] }} {{ monthNames[data['firstPublishedDate-month'] | default('')] }} {{ data['firstPublishedDate-year'] }}. It was last reviewed on {{ data['publishDate-day'] }} {{ monthNames[data['publishDate-month'] | default('')] }} {{ data['publishDate-year'] }}.
+            </p>
+          {% elseif data.hasExistingStatement == "no" %}
+            <p class="govuk-body">
+              This statement was prepared on {{ data['publishDate-day'] }} {{ monthNames[data['publishDate-month'] | default('') | trim] }} {{ data['publishDate-year'] }}.
+            </p>
+          {% endif %}            
+          {% if data['auditDate-day'] and data['auditDate-month'] and data['auditDate-year'] %}
+            <p class="govuk-body">
+              The service was last audited on {{ data['auditDate-day'] }} {{ monthNames[(data['auditDate-month'] | default('') | string) | trim] }} {{ data['auditDate-year'] }} against the WCAG 2.2 AA standard.
+            </p>
+          {% endif %}
+
+
+            {% if data.auditedBy == "internal" %}
+              <p class="govuk-body">
+                The test was carried out by an internal accessibility specialist using a combination of automated and manual testing.
+              </p>
+            {% elseif data.auditedBy == "dac" %}
+              <p class="govuk-body">
+                Testing was carried out by the <a href="https://digitalaccessibilitycentre.org/">Digital Accessibility Centre</a> (DAC).
+              </p>
+            {% endif %}
+
+            
+          {% if data.auditSummary %}
+
+            {% set lines = data.auditSummary.split('\n') %}
+            {% set inList = false %}
+
+            {% for line in lines %}
+              {% set trimmed = line.trim() %}
+
+              {% if trimmed.startsWith('- ') %}
+                {% if not inList %}
+                  <ul class="govuk-list govuk-list--bullet">
+                  {% set inList = true %}
+                {% endif %}
+                <li>{{ trimmed.substring(2) }}</li>
+
+              {% else %}
+                {% if inList %}
+                  </ul>
+                  {% set inList = false %}
+                {% endif %}
+
+                {% if trimmed %}
+                  <p class="govuk-body">{{ trimmed }}</p>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% if inList %}
+              </ul>
+            {% endif %}
+          {% endif %}
+
+          </section>
+        </article>
+        
+
+
+      </div>
+
+      <!-- HTML TAB -->
+      <div class="govuk-tabs__panel" id="html">
+        <div class="govuk-form-group">
+          <h2 class="govuk-visually-hidden">HTML</h2>
+          <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-4" id="copy-html-btn">Copy HTML to clipboard</button>
+          <pre><code id="html-output" class="language-html"></code></pre>
+          
+        </div>
+      </div>
+
+      <!-- MARKDOWN TAB -->
+      <div class="govuk-tabs__panel" id="markdown">
+        <div class="govuk-form-group">
+          <h2 class="govuk-visually-hidden">Markdown</h2>
+          <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-4" id="copy-markdown-btn">Copy Markdown to clipboard</button>
+          <pre><code id="markdown-output" class="language-markdown"></code></pre>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/public/javascripts/statement-formatter.js"></script>
+
+{% endblock %}

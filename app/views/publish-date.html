@@ -1,0 +1,74 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Publish date – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+
+{% block beforeContent %}
+  {{ super() }}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+{% if errorSummary %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: errorSummary
+  }) }}
+{% endif %}
+
+  <form action="/publish-date" method="post" novalidate>
+
+    {{ govukDateInput({
+      id: "publishDate",
+      namePrefix: "publishDate",
+      fieldset: {
+        legend: {
+          text: "When will the accessibility statement be published?",
+          classes: "govuk-fieldset__legend--l",
+          isPageHeading: true
+        }
+      },
+      hint: {
+        text: "For example, 30 4 2026"
+      },
+      errorMessage: fieldErrors.publishDate if fieldErrors,
+      items: [
+        {
+          name: "day",
+          value: data['publishDate-day'],
+          classes: "govuk-input--width-2"
+        },
+        {
+          name: "month",
+          value: data['publishDate-month'],
+          classes: "govuk-input--width-2"
+        },
+        {
+          name: "year",
+          value: data['publishDate-year'],
+          classes: "govuk-input--width-4"
+        }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: "Continue"
+    }) }}
+
+  </form>
+
+    </div>
+  </div>
+
+{% endblock %}

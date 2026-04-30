@@ -1,0 +1,75 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Reasons for non-compliance – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+
+{% block beforeContent %}
+  {{ super() }}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+{% if errorSummary %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: errorSummary
+  }) }}
+{% endif %}
+
+
+<form action="/non-compliance-reasons" method="post" novalidate>
+
+
+{{ govukCheckboxes({
+
+  idPrefix: "nonComplianceReasons",
+  name: "nonComplianceReasons",
+  values: data.nonComplianceReasons,
+  errorMessage: fieldErrors.nonComplianceReasons if fieldErrors,
+
+  fieldset: {
+    legend: {
+      text: "How did the service not meet the accessibility requirements?",
+      classes: "govuk-fieldset__legend--l"
+    }
+  },
+  
+  hint: {
+    text:
+      "Tell us the reason (or reasons) why the service partially passed the audit. Select all that apply."
+      if data.auditResult == "partial"
+      else
+      "Tell us the reason (or reasons) why the service failed the audit. Select all that apply."
+  },
+
+  items: [
+    { value: "wcag", text: "Did not meet WCAG criteria" },
+    { value: "out-of-scope", text: "Content is not in scope of the regulations", hint: "Only use this option when the accessibility regulations do not apply to the content or feature you are describing." },
+    { value: "disproportionate-burden", text: "Disproportionate burden", hint: "You can only claim disproportionate burden if specific criteria are met. The project must assess and evidence what cannot be complied with, and the reason for this." }
+  ]
+}) }}
+
+
+  {{ govukButton({
+    text: "Continue"
+  }) }}
+
+</form>
+
+  </div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,69 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Accessibility issues – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({ text: "Back", href: "javascript:window.history.back()" }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if errorSummary %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorSummary
+      }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-l">
+      Accessibility issue details
+    </h1>
+
+    <p class="govuk-body">
+      Add one issue at a time. You can add more issues later.
+    </p>
+
+    <form action="/failed-criteria" method="post" novalidate>
+
+      {{ govukSelect({
+        id: "wcagCriterion",
+        name: "wcagCriterion",
+        label: {
+          text: "Which WCAG success criterion does this issue relate to?",
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "Choose the most relevant WCAG 2.2 A or AA success criterion."
+        },
+        items: wcagCriteriaItems,
+        value: data.wcagCriterion,
+        classes: "js-wcag-autocomplete",
+        errorMessage: fieldErrors.wcagCriterion if fieldErrors
+      }) }}
+
+      {{ govukTextarea({
+        name: "issueDescription",
+        id: "issue-description",
+        label: {
+          text: "Describe the accessibility issue",
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "Explain what the issue is and who it affects. Use plain English."
+        },
+        value: data.issueDescription,
+        errorMessage: fieldErrors.issueDescription if fieldErrors
+      }) }}
+
+      {{ govukButton({ text: "Add issue" }) }}
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Audit result – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+
+{% block beforeContent %}
+  {{ super() }}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+<form action="/audit-result" method="post" novalidate>
+
+{{ govukRadios({
+  idPrefix: "audit-result",
+  name: "auditResult",
+  fieldset: {
+    legend: {
+      text: "What was the audit result?",
+      isPageHeading: true,
+      classes: "govuk-fieldset__legend--l"
+    }
+  },
+  errorMessage: fieldErrors.auditResult if fieldErrors,
+  items: [
+    { value: "pass", text: "Pass - all criteria is met" },
+    { value: "partial", text: "Partial pass - most of the criteria is met" },
+    { value: "fail", text: "Fail - most of the criteria is not met" }
+  ]
+}) }}
+
+{{ govukButton({
+    text: "Continue"
+  }) }}
+
+</form>
+
+
+    </div>
+  </div>
+
+{% endblock %}

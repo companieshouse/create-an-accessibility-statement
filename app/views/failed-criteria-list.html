@@ -1,0 +1,88 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Accessibility issues added – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({ text: "Back", href: "javascript:window.history.back()" }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">
+      Accessibility issues added
+    </h1>
+
+    {% if (data.failedCriteria or []).length == 0 %}
+      <p class="govuk-body">
+        You have not added any issues yet.
+      </p>
+
+      {{ govukButton({
+        text: "Add an issue",
+        href: "/failed-criteria",
+        classes: "govuk-button"
+      }) }}
+
+    {% else %}
+
+      
+      
+
+
+
+{% for item in data.failedCriteria %}
+  {{ govukSummaryList({
+    card: {
+      title: {
+        text: "Issue " ~ loop.index
+      },
+      actions: {
+        items: [
+          {
+            text: "Remove",
+            href: "/failed-criteria/remove/" ~ loop.index0,
+            visuallyHiddenText: "issue " ~ loop.index
+          }
+        ]
+      }
+    },
+    rows: [
+      {
+        key: { text: "Description" },
+        value: { text: item.description }
+      },
+      {
+        key: { text: "WCAG criterion" },
+        value: { text: item.wcagText }
+      }
+    ]
+  }) }}
+{% endfor %}
+
+
+
+
+
+      {{ govukButton({
+        text: "Add another issue",
+        href: "/failed-criteria"
+      }) }}
+
+      
+{{ govukButton({
+  text: "No more to add",
+  href: "/failed-criteria/continue",
+  classes: "govuk-button--secondary"
+}) }}
+
+
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

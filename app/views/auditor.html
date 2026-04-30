@@ -1,0 +1,119 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Accessibility Auditor – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+
+{% block beforeContent %}
+  {{ super() }}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+
+{% block content %}
+
+{% if errorSummary %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: errorSummary
+  }) }}
+{% endif %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        Accessibility audit details
+      </h1>
+
+      <form class="form" action="/auditor" method="post">
+
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+
+<section class="govuk-!-margin-bottom-9">
+{{ govukDateInput({
+  id: "audit-date",
+  namePrefix: "auditDate",
+  fieldset: {
+    legend: {
+      text: "When was the service audited?",
+      classes: "govuk-fieldset__legend--m",
+      isPageHeading: true
+    }
+  },
+  hint: {
+    text: "For example, 15 3 2024"
+  },
+  errorMessage: fieldErrors.auditDate if fieldErrors,
+  items: [
+    { name: "day", value: data['auditDate-day'], classes: "govuk-input--width-2" },
+    { name: "month", value: data['auditDate-month'], classes: "govuk-input--width-2" },
+    { name: "year", value: data['auditDate-year'], classes: "govuk-input--width-4" }
+  ]
+}) }}
+</section>
+<section class="govuk-!-margin-bottom-9">
+{{ govukRadios({
+  idPrefix: "audited-by",
+  name: "auditedBy",
+  fieldset: {
+    legend: {
+      text: "Who was the service audited by?",
+      classes: "govuk-fieldset__legend--m"
+    }
+  },
+  errorMessage: fieldErrors.auditedBy if fieldErrors,
+  items: [
+    {
+      value: "internal",
+      text: "Internal team",
+      checked: data.auditedBy == "internal"
+    },
+    {
+      value: "dac",
+      text: "Digital Accessibility Centre (DAC)",
+      checked: data.auditedBy == "dac"
+    }
+  ]
+}) }}
+</section>
+<section class="govuk-!-margin-bottom-9">
+{{ govukTextarea({
+ id: "audit-summary",
+  name: "auditSummary",
+  label: {
+    text: "What was tested as part of the audit?",
+    classes: "govuk-label--m"
+  },
+  hint: {
+    text: "Summarise what areas of the service were tested in the audit. You can use paragraphs, or add a bulleted list by starting each line with a hyphen."
+  },
+  value: data.auditSummary,
+  rows: 6,
+  errorMessage: fieldErrors.auditSummary if fieldErrors
+}) }}
+
+{{ govukDetails({
+  summaryText: "Summary examples",
+  html: "<h2 class=\"govuk-heading-s\">Example 1</h2><p class=\"govuk-body\">DAC tested a sample of pages to cover the different content types in the GOV.UK Design System website. They also tested the global search functionality that appears in the header of the GOV.UK Design System website.</p><h2 class=\"govuk-heading-s\">Example 2</h2><p class=\"govuk-body\">Our internal team tested the following screens:</p><ul class=\"govuk-list govuk-list--bullet\"><li>homepage</li><li>search page</li><li>search results page</li><li>contact us form</li></ul>"
+}) }}
+</section>
+
+
+    {{ govukButton({
+      text: "Continue"
+    }) }}
+
+
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

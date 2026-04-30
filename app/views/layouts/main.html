@@ -4,3 +4,25 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 #}
 
 {% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
+
+{% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+
+
+{% block scripts %}
+  {{ super() }}
+  <script src="/public/javascripts/accessible-autocomplete.min.js"></script>
+  <script src="/public/javascripts/wcag-autocomplete.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+{% endblock %}
+
+
+{% block beforeContent %}
+  {{ govukPhaseBanner({
+    tag: {
+      text: "Alpha"
+    },
+    html: 'This is a new service. Help us improve it and <a class="govuk-link" href="mailto:dpayne1@companieshouse.gov.uk">give your feedback by email</a>.'
+  }) }}
+{% endblock %}

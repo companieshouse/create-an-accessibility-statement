@@ -1,0 +1,63 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Content that is out of scope – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if errorSummary %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorSummary
+      }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-l">
+      Describe the content that is out of scope
+    </h1>
+
+    <p class="govuk-body">
+      Use this section to describe content that is out of scope of the accessibility regulations.
+    </p>
+
+    <p class="govuk-body">
+      For example, older PDFs published before September 2018, or third‑party content that you do not control.
+    </p>
+
+    <form method="post" novalidate>
+
+      {{ govukTextarea({
+        name: "outOfScopeDetails",
+        id: "out-of-scope-details",
+        label: {
+          text: "Description of content",
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "Explain what the content is and why it is out of scope. This text will appear in the accessibility statement."
+        },
+        value: data.outOfScopeDetails,
+        rows: 8,
+        errorMessage: fieldErrors.outOfScopeDetails if fieldErrors else null
+      }) }}
+
+      {{ govukButton({
+        text: "Continue"
+      }) }}
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

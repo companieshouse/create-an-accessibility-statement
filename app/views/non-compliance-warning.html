@@ -1,0 +1,141 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Important – approvals required – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+
+{% block beforeContent %}
+  {{ super() }}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+  {% if errorSummary %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: errorSummary
+    }) }}
+  {% endif %}
+
+  <h1 class="govuk-heading-l">
+    Confirm you have the evidence and approvals required
+  </h1>
+
+
+
+  {# Draft content – changes depending on what was selected #}
+
+  {% set reasons = data.nonComplianceReasons or [] %}
+
+  {% if "out-of-scope" in reasons and "disproportionate-burden" not in reasons %}
+    <h2 class="govuk-heading-m">You selected: Content is not in scope of the regulations</h2>
+    <p class="govuk-body">
+      Before you continue, make sure that in your project documentation you’ve:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        included evidence that the content is out of scope
+      </li>
+      <li>
+        stated that an appropriate internal colleague has given approval for treating the content as out of scope
+      </li>
+
+    </ul>
+     <p class="govuk-body">
+      If you need help with this, <a href="mailto:dpayne1@companieshouse.gov.uk">contact our accessibility team</a> for advice.
+    </p>
+
+  {% elseif "disproportionate-burden" in reasons and "out-of-scope" not in reasons %}
+    <h2 class="govuk-heading-m">You selected: Disproportionate burden</h2>
+    <p class="govuk-body">
+      Declaring disproportionate burden means many criteria must be met. Make sure that in your project documentation, you've included:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the assessment and evidence of what cannot be complied with</li>
+      <li>the reason for the decision</li>
+      <li>costs, benefits and timelines</li>
+    </ul>
+    <p class="govuk-body">
+      If you need help with this, <a href="mailto:dpayne1@companieshouse.gov.uk">contact our accessibility team</a> for advice before proceeding.
+    </p>
+
+
+  {% elseif "disproportionate-burden" in reasons and "out-of-scope" in reasons %}
+    <h2 class="govuk-heading-m">You selected: Content is not in scope of the regulations</h2>
+    <p class="govuk-body">
+      Before you continue, make sure that in your project documentation you’ve:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        included evidence that the content is out of scope
+      </li>
+      <li>
+        stated that an appropriate internal colleague has given approval for treating the content as out of scope
+      </li>
+
+    </ul>
+     <h2 class="govuk-heading-m">You selected: Disproportionate burden</h2>
+    <p class="govuk-body">
+      Declaring disproportionate burden means many criteria must be met. Make sure that in your project documentation, you've included:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the assessment and evidence of what cannot be complied with</li>
+      <li>the reason for the decision</li>
+      <li>costs, benefits and timelines</li>
+    </ul>
+    <p class="govuk-body">
+      Before you continue, make sure you have evidence and approvals for both reasons you selected.
+    </p>
+    <p class="govuk-body">
+      If you need help with this, <a href="mailto:dpayne1@companieshouse.gov.uk">contact our accessibility team</a> for advice before proceeding.
+    </p>
+  {% endif %}
+
+  <form action="/non-compliance-warning" method="post" novalidate>
+
+  {{ govukWarningText({
+    text: "You are about to include exemptions in an accessibility statement. This can increase legal and reputational risk if the evidence and approvals are not recorded.",
+    iconFallbackText: "Warning"
+  }) }}
+
+    {{ govukCheckboxes({
+      name: "approvalsConfirmed",
+      errorMessage: fieldErrors.approvalsConfirmed if fieldErrors,
+      items: [
+        {
+          value: "confirmed",
+          text: "I confirm that I have the evidence and approvals needed."
+        }
+      ]
+    }) }}
+
+
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Continue"
+  }) }}
+
+  {{ govukButton({
+    text: "Go back",
+    classes: "govuk-button--secondary",
+    href: "javascript:window.history.back()"
+  }) }}
+</div>
+
+
+  </form>
+
+  </div>
+</div>
+
+{% endblock %}

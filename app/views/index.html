@@ -4,16 +4,66 @@
 
 {% block content %}
 
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
-    {% include "govuk-prototype-kit/includes/homepage-top.njk" %}
-
-    <h1 class="govuk-heading-xl">
-      {{ serviceName }}
+    <h1 class="govuk-heading-l">
+      Create an accessibility statement
     </h1>
+    <p class="govuk-body">
+      Use this service to create or update an accessibility statement for a Companies House digital service.
+    </p>
+    <h2 class='govuk-heading-m'>What you’ll need</h2>
+    <p class='govuk-body'>
+      To create the statement, you’ll need to provide: 
+    </p>
+    <ul class='govuk-list govuk-list--bullet'>
+      <li>the service name</li>
+      <li>relevant dates – the date it was audited, the date the statement will be published, and the date the statement was first published (if it already exists) </li>
+      <li>who carried out the audit </li>
+      <li>a short summary of what was tested </li>
+      <li>the audit result - pass, partial pass or fail </li>
+    </ul>
+        <h2 class='govuk-heading-m'>If the service had a partial pass or fail</h2>
+   <p class="govuk-body">You’ll also need:</p>
+      <ul class="govuk-list govuk-list--bullet">
+      <li>a summary of the accessibility issues</li>
+      <li>to tell us why the service didn’t meet accessibility requirements </li>
+      <li>a description of each accessibility issue </li>
+      <li>to select which WCAG success criterion each issue relates to </li>
+    </ul>
 
-    {% include "govuk-prototype-kit/includes/homepage-bottom.njk" %}
+{{ govukDetails({
+  summaryText: "If 'content is not in scope' is selected as a reason",
+  html: '<p class="govuk-body">Make sure that in your project documentation, you’ve:</p>
+                <ul class="govuk-list govuk-list--bullet"><li>included evidence that the content is out of scope</li><li>stated that an appropriate internal colleague has given approval for treating the content as out of scope</li></ul>
+                <p class="govuk-body">We’ll ask you to confirm you have the evidence and approvals needed.</p>'
+}) }}
+
+{{ govukDetails({
+  summaryText: "If 'disproportionate burden' is selected as a reason",
+        html: '<p class="govuk-body">Declaring disproportionate burden means many criteria must be met. Make sure that in your project documentation, you’ve included:</p>
+              <ul class="govuk-list govuk-list--bullet"><li>the assessment and evidence of what cannot be complied with</li><li>the reason for the decision</li><li>costs, benefits and timelines</li></ul>
+            <p class="govuk-body">We’ll ask you to confirm you have the evidence and approvals needed.</p>'
+}) }}
+
+    <h2 class='govuk-heading-m'>What happens next</h2>
+    <p>When you’ve completed the service, you’ll have content you can use in a GOV.UK accessibility statement. This will be based on the <a href="https://www.gov.uk/government/publications/sample-accessibility-statement/sample-accessibility-statement-for-a-fictional-public-sector-website">sample accessibility statement</a>. </p>
+    <p class="govuk-body">The statement will be generated in 3 formats:</p>
+    <ul class='govuk-list govuk-list--bullet'>
+      <li>standard preview</li>
+      <li>HTML</li>
+      <li>markdown</li>
+    </ul>
+    <p class="govuk-body">
+      You should copy and paste the statement in your chosen format immediately to avoid losing the information. You cannot save your answers in this service.  
+    </p>
+    {{ govukButton({
+      text: "Start now",
+      href: "/service-name",
+      isStartButton: true
+    }) }}
+
   </div>
 </div>
 

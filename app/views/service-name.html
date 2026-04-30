@@ -1,0 +1,56 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+
+{% block beforeContent %}
+  {{ super() }}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+  <form action="/service-name" method="post" novalidate>
+
+{% if errorSummary %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: errorSummary
+  }) }}
+{% endif %}
+
+
+    {{ govukInput({
+      id: "service-name",
+      name: "serviceName",
+      value: data.serviceName,
+      label: {
+        text: "What’s the name of the service?",
+        classes: "govuk-label--l",
+        isPageHeading:true
+      },
+      hint: {
+        text: "Enter the public name of the service. For example, 'Find and update company information'."
+      },
+      errorMessage: fieldErrors.serviceName if fieldErrors
+    }) }}
+
+    {{ govukButton({
+      text: "Continue"
+    }) }}
+    </form>
+
+    </div>
+  </div>
+
+{% endblock %}

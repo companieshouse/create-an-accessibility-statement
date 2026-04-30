@@ -1,0 +1,461 @@
+{% extends "layouts/main.html" %}
+
+{# Use 2-digit keys only to avoid parsing quirks and to match GOV.UK date inputs #}
+{% set monthNames = {
+  "01": "January",
+  "02": "February",
+  "03": "March",
+  "04": "April",
+  "05": "May",
+  "06": "June",
+  "07": "July",
+  "08": "August",
+  "09": "September",
+  "10": "October",
+  "11": "November",
+  "12": "December"
+} %}
+
+{% block pageTitle %}
+  Your accessibility statement – {{ data.serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{# -------------------------------------------------- #}
+{# Helper values used in multiple formats              #}
+{# -------------------------------------------------- #}
+
+{% set hasNonCompliances = data.failedCriteria and data.failedCriteria.length %}
+{% set hasExemptions = (data.outOfScopeDetails or data.disproportionateBurdenDetails) %}
+
+{% if hasNonCompliances and hasExemptions %}
+  {% set issueSummary = "the non-compliances and exemptions" %}
+{% elseif hasNonCompliances %}
+  {% set issueSummary = "the non-compliances" %}
+{% elseif hasExemptions %}
+  {% set issueSummary = "the exemptions" %}
+{% else %}
+  {% set issueSummary = "" %}
+{% endif %}
+
+{# -------------------------------------------------- #}
+{# Build the statement HTML once (no gaps)             #}
+{# Preview uses |safe and HTML tab uses |escape        #}
+{# -------------------------------------------------- #}
+
+{% set html = [] %}
+
+{% set html = html.concat([
+  '<h1 class="govuk-heading-xl">Accessibility statement for ' ~ (data.serviceName or '') ~ '</h1>'
+]) %}
+
+{% set html = html.concat([
+  '<section class="govuk-!-margin-bottom-9">',
+  '  <p class="govuk-body">This accessibility statement applies to the ‘' ~ (data.serviceName or '') ~ '’ service.</p>',
+  '  <p class="govuk-body">This website is run by Companies House. We want as many people as possible to be able to use this website. For example, that means you should be able to:</p>',
+  '  <ul class="govuk-list govuk-list--bullet">',
+  '    <li>change colours, contrast levels and fonts using browser or device settings</li>',
+  '    <li>zoom in up to 400% without the text spilling off the screen</li>',
+  '    <li>navigate most of the website using a keyboard or speech recognition software</li>',
+  '    <li>listen to most of the website using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)</li>',
+  '  </ul>',
+  '  <p class="govuk-body">We’ve also made the website text as simple as possible to understand.</p>',
+  '  <p class="govuk-body"><a rel="external" class="govuk-link" href="https://mcmw.abilitynet.org.uk/">AbilityNet</a> has advice on making your device easier to use if you have a disability.</p>',
+  '</section>'
+]) %}
+
+{# How accessible this website is (issues-summary content) #}
+{% if data.plainEnglishIssues %}
+  {% set html = html.concat([
+    '<section class="govuk-!-margin-bottom-9">',
+    '  <h2 class="govuk-heading-l">How accessible this website is</h2>',
+    '  <p class="govuk-body">We know some parts of this website are not fully accessible:</p>'
+  ]) %}
+
+  {% set lines = (data.plainEnglishIssues or '').split('\n') %}
+  {% set inList = false %}
+
+  {% for line in lines %}
+    {% set trimmed = line | trim %}
+    {% if trimmed %}
+      {% if trimmed.startsWith('- ') %}
+        {% if not inList %}
+          {% set html = html.concat(['  <ul class="govuk-list govuk-list--bullet">']) %}
+          {% set inList = true %}
+        {% endif %}
+        {% set html = html.concat(['    <li>' ~ trimmed.substring(2) ~ '</li>']) %}
+      {% else %}
+        {% if inList %}
+          {% set html = html.concat(['  </ul>']) %}
+          {% set inList = false %}
+        {% endif %}
+        {% set html = html.concat(['  <p class="govuk-body">' ~ trimmed ~ '</p>']) %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% if inList %}
+    {% set html = html.concat(['  </ul>']) %}
+  {% endif %}
+
+  {% set html = html.concat(['</section>']) %}
+{% endif %}
+
+{# Feedback & enforcement #}
+{% set html = html.concat([
+  '<section class="govuk-!-margin-bottom-9">',
+  '  <h2 class="govuk-heading-l">Feedback and contact information</h2>',
+  '  <p class="govuk-body">We’re always looking to improve the accessibility of our services. If you find any problems not listed on this page or have difficulty using any part of this service, <a class="govuk-link" href="https://www.gov.uk/find-contact-details-companies-house">contact Companies House</a>.</p>',
+  '</section>',
+  '<section class="govuk-!-margin-bottom-9">',
+  '  <h2 class="govuk-heading-l">Enforcement procedure</h2>',
+  '  <p class="govuk-body">The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’). If you’re not happy with how we respond to your complaint, <a class="govuk-link" href="https://www.equalityadvisoryservice.com/">contact the Equality Advisory and Support Service (EASS)</a>.</p>',
+  '</section>'
+]) %}
+
+{# Technical info + compliance status #}
+{% set html = html.concat([
+  '<section class="govuk-!-margin-bottom-9">',
+  '  <h2 class="govuk-heading-l">Technical information about this website’s accessibility</h2>',
+  '  <p class="govuk-body">Companies House is committed to making its website accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.</p>',
+  '  <h3 class="govuk-heading-m">Compliance status</h3>',
+  '  <p class="govuk-body">This website has been tested against the Web Content Accessibility Guidelines (WCAG) 2.2 AA standard.</p>'
+]) %}
+
+{% if data.complianceStatus == "pass" %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">This website is fully compliant with the Web Content Accessibility Guidelines version 2.2 AA standard.</p>'
+  ]) %}
+{% elseif data.complianceStatus == "partial" %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">This website is partially compliant with the Web Content Accessibility Guidelines version 2.2 AA standard, due to ' ~ issueSummary ~ ' listed below.</p>'
+  ]) %}
+{% elseif data.complianceStatus == "fail" %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">This website is not compliant with the Web Content Accessibility Guidelines version 2.2 AA standard. The ' ~ issueSummary ~ ' are listed below.</p>'
+  ]) %}
+{% endif %}
+
+{% set html = html.concat(['</section>']) %}
+
+{# Non-accessible content #}
+{% if (data.failedCriteria and data.failedCriteria.length) or data.outOfScopeDetails or data.disproportionateBurdenDetails %}
+  {% set html = html.concat([
+    '<section class="govuk-!-margin-bottom-9">',
+    '  <h2 class="govuk-heading-l">Non-accessible content</h2>',
+    '  <p class="govuk-body">The content listed below is non-accessible for the following reasons.</p>'
+  ]) %}
+
+  {% if data.failedCriteria and data.failedCriteria.length %}
+    {% set html = html.concat([
+      '  <h3 class="govuk-heading-m">Non-compliance with the accessibility regulations</h3>',
+      '  <ul class="govuk-list govuk-list--bullet">'
+    ]) %}
+
+    {% for issue in data.failedCriteria %}
+      {% set html = html.concat([
+        '    <li>' ~ issue.description ~ '. This does not meet WCAG 2.2 success criterion ' ~ issue.wcagText ~ '.</li>'
+      ]) %}
+    {% endfor %}
+
+    {% set html = html.concat(['  </ul>']) %}
+  {% endif %}
+
+  {% if data.outOfScopeDetails %}
+    {% set html = html.concat([
+      '  <h3 class="govuk-heading-m">Content that’s not within the scope of the accessibility regulations</h3>'
+    ]) %}
+
+    {% for line in data.outOfScopeDetails.split('\n') %}
+      {% set t = line | trim %}
+      {% if t %}
+        {% set html = html.concat(['  <p class="govuk-body">' ~ t ~ '</p>']) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if data.disproportionateBurdenDetails %}
+    {% set html = html.concat([
+      '  <h3 class="govuk-heading-m">Disproportionate burden</h3>'
+    ]) %}
+
+    {% for line in data.disproportionateBurdenDetails.split('\n') %}
+      {% set t = line | trim %}
+      {% if t %}
+        {% set html = html.concat(['  <p class="govuk-body">' ~ t ~ '</p>']) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% set html = html.concat(['</section>']) %}
+{% endif %}
+
+{# Preparation section + audit summary #}
+{% set html = html.concat([
+  '<section class="govuk-!-margin-bottom-9">',
+  '  <h2 class="govuk-heading-l">Preparation of this accessibility statement</h2>'
+]) %}
+
+{% if data.hasExistingStatement == "yes" %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">This statement was prepared on ' ~
+      (data['firstPublishedDate-day'] or '') ~ ' ' ~
+      (monthNames[data['firstPublishedDate-month']] or '') ~ ' ' ~
+      (data['firstPublishedDate-year'] or '') ~
+      '. It was last reviewed on ' ~
+      (data['publishDate-day'] or '') ~ ' ' ~
+      (monthNames[data['publishDate-month']] or '') ~ ' ' ~
+      (data['publishDate-year'] or '') ~
+      '.</p>'
+  ]) %}
+{% elseif data.hasExistingStatement == "no" %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">This statement was prepared on ' ~
+      (data['publishDate-day'] or '') ~ ' ' ~
+      (monthNames[data['publishDate-month']] or '') ~ ' ' ~
+      (data['publishDate-year'] or '') ~
+      '.</p>'
+  ]) %}
+{% endif %}
+
+{% if data['auditDate-day'] and data['auditDate-month'] and data['auditDate-year'] %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">The service was last audited on ' ~
+      data['auditDate-day'] ~ ' ' ~
+      (monthNames[data['auditDate-month']] or '') ~ ' ' ~
+      data['auditDate-year'] ~
+      ' against the WCAG 2.2 AA standard.</p>'
+  ]) %}
+{% endif %}
+
+{% if data.auditedBy == "internal" %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">The test was carried out by an internal accessibility specialist using a combination of automated and manual testing.</p>'
+  ]) %}
+{% elseif data.auditedBy == "dac" %}
+  {% set html = html.concat([
+    '  <p class="govuk-body">Testing was carried out by the <a class="govuk-link" href="https://digitalaccessibilitycentre.org/">Digital Accessibility Centre (DAC)</a>.</p>'
+  ]) %}
+{% endif %}
+
+{% if data.auditSummary %}
+  {% set lines = (data.auditSummary or '').split('\n') %}
+  {% set inList = false %}
+
+  {% for line in lines %}
+    {% set trimmed = line | trim %}
+    {% if trimmed %}
+      {% if trimmed.startsWith('- ') %}
+        {% if not inList %}
+          {% set html = html.concat(['  <ul class="govuk-list govuk-list--bullet">']) %}
+          {% set inList = true %}
+        {% endif %}
+        {% set html = html.concat(['    <li>' ~ trimmed.substring(2) ~ '</li>']) %}
+      {% else %}
+        {% if inList %}
+          {% set html = html.concat(['  </ul>']) %}
+          {% set inList = false %}
+        {% endif %}
+        {% set html = html.concat(['  <p class="govuk-body">' ~ trimmed ~ '</p>']) %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% if inList %}
+    {% set html = html.concat(['  </ul>']) %}
+  {% endif %}
+{% endif %}
+
+{% set html = html.concat(['</section>']) %}
+
+{% set statementHtml = html | join('\n') %}
+
+{# -------------------------------------------------- #}
+{# Build Markdown (FULLY matches HTML)                #}
+{# -------------------------------------------------- #}
+
+{% set md = [] %}
+
+{# Intro #}
+{% set md = md.concat([
+  "# Accessibility statement for " ~ (data.serviceName or ""),
+  "This accessibility statement applies to the \"" ~ (data.serviceName or "") ~ "\" service.",
+  "This website is run by Companies House. We want as many people as possible to be able to use this website. For example, that means you should be able to:\n" ~
+  "- change colours, contrast levels and fonts using browser or device settings\n" ~
+  "- zoom in up to 400% without the text spilling off the screen\n" ~
+  "- navigate most of the website using a keyboard or speech recognition software\n" ~
+  "- listen to most of the website using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)",
+  "We’ve also made the website text as simple as possible to understand.",
+  "[AbilityNet](https://mcmw.abilitynet.org.uk/) has advice on making your device easier to use if you have a disability."
+]) %}
+
+{# How accessible this website is #}
+{% if data.plainEnglishIssues %}
+  {% set md = md.concat([
+    "## How accessible this website is",
+    "We know some parts of this website are not fully accessible:\n\n" ~ data.plainEnglishIssues
+  ]) %}
+{% endif %}
+
+{# Feedback & enforcement #}
+{% set md = md.concat([
+  "## Feedback and contact information",
+  "We’re always looking to improve the accessibility of our services. If you find any problems not listed on this page or have difficulty using any part of this service, [contact Companies House](https://www.gov.uk/find-contact-details-companies-house).",
+
+  "## Enforcement procedure",
+  "The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.\n\nIf you’re not happy with how we respond to your complaint, [contact the Equality Advisory and Support Service](https://www.equalityadvisoryservice.com/) (EASS):\n"
+]) %}
+
+{# Technical info + compliance #}
+{% set md = md.concat([
+  "## Technical information about this website’s accessibility",
+  "Companies House is committed to making its website accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.",
+  "### Compliance status",
+  "This website has been tested against the Web Content Accessibility Guidelines (WCAG) 2.2 AA standard."
+]) %}
+
+{% if data.complianceStatus == "pass" %}
+  {% set md = md.concat([
+    "This website is fully compliant with the Web Content Accessibility Guidelines version 2.2 AA standard."
+  ]) %}
+{% elseif data.complianceStatus == "partial" %}
+  {% set md = md.concat([
+    "This website is partially compliant with the Web Content Accessibility Guidelines version 2.2 AA standard, due to " ~ issueSummary ~ " listed below."
+  ]) %}
+{% elseif data.complianceStatus == "fail" %}
+  {% set md = md.concat([
+    "This website is not compliant with the Web Content Accessibility Guidelines version 2.2 AA standard. The " ~ issueSummary ~ " are listed below."
+  ]) %}
+{% endif %}
+
+{# Non-accessible content #}
+{% if (data.failedCriteria and data.failedCriteria.length) or data.outOfScopeDetails or data.disproportionateBurdenDetails %}
+  {% set md = md.concat([
+    "## Non-accessible content",
+    "The content listed below is non-accessible for the following reasons."
+  ]) %}
+
+  {% if data.failedCriteria and data.failedCriteria.length %}
+    {% set md = md.concat([
+      "### Non-compliance with the accessibility regulations"
+    ]) %}
+    {% for issue in data.failedCriteria %}
+      {% set md = md.concat([
+        "- " ~ issue.description ~ ". This does not meet WCAG 2.2 success criterion " ~ issue.wcagText ~ "."
+      ]) %}
+    {% endfor %}
+  {% endif %}
+
+  {% if data.outOfScopeDetails %}
+    {% set md = md.concat([
+      "### Content that’s not within the scope of the accessibility regulations",
+      data.outOfScopeDetails
+    ]) %}
+  {% endif %}
+
+  {% if data.disproportionateBurdenDetails %}
+    {% set md = md.concat([
+      "### Disproportionate burden",
+      data.disproportionateBurdenDetails
+    ]) %}
+  {% endif %}
+{% endif %}
+
+{# Preparation + audit #}
+{% set md = md.concat([
+  "## Preparation of this accessibility statement"
+]) %}
+
+{% if data.hasExistingStatement == "yes" %}
+  {% set md = md.concat([
+    "This statement was prepared on " ~
+    (data['firstPublishedDate-day'] or '') ~ " " ~
+    (monthNames[data['firstPublishedDate-month']] or '') ~ " " ~
+    (data['firstPublishedDate-year'] or '') ~
+    " and last reviewed on " ~
+    (data['publishDate-day'] or '') ~ " " ~
+    (monthNames[data['publishDate-month']] or '') ~ " " ~
+    (data['publishDate-year'] or '') ~ "."
+  ]) %}
+{% elseif data.hasExistingStatement == "no" %}
+  {% set md = md.concat([
+    "This statement was prepared on " ~
+    (data['publishDate-day'] or '') ~ " " ~
+    (monthNames[data['publishDate-month']] or '') ~ " " ~
+    (data['publishDate-year'] or '') ~ "."
+  ]) %}
+{% endif %}
+
+{% if data['auditDate-day'] and data['auditDate-month'] and data['auditDate-year'] %}
+  {% set md = md.concat([
+    "The service was last audited on " ~
+    data['auditDate-day'] ~ " " ~
+    (monthNames[data['auditDate-month']] or '') ~ " " ~
+    data['auditDate-year'] ~ " against the WCAG 2.2 AA standard."
+  ]) %}
+{% endif %}
+
+{% if data.auditedBy == "internal" %}
+  {% set md = md.concat([
+    "The test was carried out by an internal accessibility specialist using a combination of automated and manual testing."
+  ]) %}
+{% elseif data.auditedBy == "dac" %}
+  {% set md = md.concat([
+    "Testing was carried out by the [Digital Accessibility Centre (DAC)](https://digitalaccessibilitycentre.org/)."
+  ]) %}
+{% endif %}
+
+{% if data.auditSummary %}
+  {% set md = md.concat([data.auditSummary]) %}
+{% endif %}
+
+{% set statementMarkdown = md | join("\n\n") %}
+
+
+{# -------------------------------------------------- #}
+{# Page content with GOV.UK tabs                        #}
+{# -------------------------------------------------- #}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">Your accessibility statement</h1>
+
+    <p class="govuk-body">
+      This is the draft accessibility statement for {{ data.serviceName }}.
+    </p>
+
+    <div class="govuk-tabs" data-module="govuk-tabs">
+      <h2 class="govuk-tabs__title">Statement formats</h2>
+
+      <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+          <a class="govuk-tabs__tab" href="#preview">Preview</a>
+        </li>
+        <li class="govuk-tabs__list-item">
+          <a class="govuk-tabs__tab" href="#html">HTML</a>
+        </li>
+        <li class="govuk-tabs__list-item">
+          <a class="govuk-tabs__tab" href="#markdown">Markdown</a>
+        </li>
+      </ul>
+
+      <div class="govuk-tabs__panel" id="preview">
+        <div class="statement-preview">
+          {{ statementHtml | safe }}
+        </div>
+      </div>
+
+      <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="html">
+        <h2 class="govuk-heading-s govuk-visually-hidden">HTML</h3>
+        <pre class="govuk-code-block"><code>{{ statementHtml | escape }}</code></pre>
+      </div>
+
+      <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="markdown">
+        <h2 class="govuk-heading-s govuk-visually-hidden">Markdown</h3>
+        <pre class="govuk-code-block"><code>{{ statementMarkdown }}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+``

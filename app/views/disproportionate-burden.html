@@ -1,0 +1,63 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Disproportionate burden – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ super() }}
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {% if errorSummary %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errorSummary
+      }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-l">
+      Describe the disproportionate burden
+    </h1>
+
+    <p class="govuk-body">
+      Use this section to explain why fixing some accessibility issues would be a disproportionate burden.
+    </p>
+
+    <p class="govuk-body">
+      You should describe the impact on users, the cost or feasibility of fixing the issue, and any plans to review this decision.
+    </p>
+
+    <form method="post" novalidate>
+
+      {{ govukTextarea({
+        name: "disproportionateBurdenDetails",
+        id: "disproportionate-burden-details",
+        label: {
+          text: "Description of the disproportionate burden",
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "This text will appear in the accessibility statement."
+        },
+        value: data.disproportionateBurdenDetails,
+        rows: 10,
+        errorMessage: fieldErrors.disproportionateBurdenDetails if fieldErrors
+      }) }}
+
+      {{ govukButton({
+        text: "Continue"
+      }) }}
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

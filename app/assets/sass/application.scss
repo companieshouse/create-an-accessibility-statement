@@ -4,3 +4,27 @@
 // 
 
 // Add extra styles here
+
+.statement-preview {
+  max-height: 60vh;
+  overflow-y: auto;
+
+  padding: govuk-spacing(4);
+
+  border: 2px solid $govuk-border-colour;
+  background-color: $govuk-body-background-colour;
+
+  // Improve readability when scrolling
+  box-sizing: border-box;
+
+  // Optional: slightly rounded corners (allowed on non-interactive containers)
+  border-radius: 4px;
+}
+
+pre code {
+  // Ensure code blocks are readable and don't overflow
+  overflow-x: auto;
+    display: block;
+    padding: 20px;
+    background-color: #f3f3f3;
+}
