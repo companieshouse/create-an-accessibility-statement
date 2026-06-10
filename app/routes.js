@@ -58,7 +58,7 @@ const wcagCriteriaItems = [
   { value: "3.3.1", text: "3.3.1 (Error identification)" },
   { value: "3.3.2", text: "3.3.2 (Labels or instructions)" },
   { value: "3.3.3", text: "3.3.3 (Error suggestion)" },
-  { value: "3.3.4", text: "3.3.4 (Error prevention - legal, financial. data)" },
+  { value: "3.3.4", text: "3.3.4 (Error prevention - legal, financial, data)" },
   { value: "3.3.7", text: "3.3.7 (Redundant entry)" },
   { value: "3.3.8", text: "3.3.8 (Accessible authentication)" },
   { value: "4.1.1", text: "4.1.1 (Parsing)" },
