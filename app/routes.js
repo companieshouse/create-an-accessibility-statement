@@ -277,11 +277,11 @@ router.post('/auditor', function (req, res) {
   // ---- Auditor validation ----
   if (!auditedBy) {
     errorSummary.push({
-      text: 'Select who the service was audited by',
+      text: 'Select who audited the service',
       href: '#audited-by'
     })
     fieldErrors.auditedBy = {
-      text: 'Select who the service was audited by'
+      text: 'Select who audited the service'
     }
   }
 

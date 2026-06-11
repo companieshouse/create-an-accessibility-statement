@@ -64,7 +64,7 @@
   name: "auditedBy",
   fieldset: {
     legend: {
-      text: "Who was the service audited by?",
+      text: "Who audited the service?",
       classes: "govuk-fieldset__legend--m"
     }
   },
@@ -99,9 +99,11 @@
   errorMessage: fieldErrors.auditSummary if fieldErrors
 }) }}
 
+<!-- Deliberately included hyphens in the examples rather than using a bulleted list so it is representative of what a user would input  -->
+
 {{ govukDetails({
   summaryText: "Summary examples",
-  html: "<h2 class=\"govuk-heading-s\">Example 1</h2><p class=\"govuk-body\">DAC tested a sample of pages to cover the different content types in the GOV.UK Design System. They also tested the global search functionality that appears in the header of the GOV.UK Design System.</p><h2 class=\"govuk-heading-s\">Example 2</h2><p class=\"govuk-body\">Our internal team tested the following screens:</p><ul class=\"govuk-list govuk-list--bullet\"><li>homepage</li><li>search page</li><li>search results page</li><li>contact us form</li></ul>"
+  html: "<h2 class=\"govuk-heading-s\">Example 1</h2><p class=\"govuk-body\">DAC tested a sample of pages to cover the different content types in the GOV.UK Design System. They also tested the global search functionality that appears in the header of the GOV.UK Design System.</p><h2 class=\"govuk-heading-s\">Example 2</h2><p class=\"govuk-body\">Our internal team tested the following screens:</p><ul class=\"govuk-list\"><li>- homepage</li><li>- search page</li><li>- search results page</li><li>- contact us form</li></ul>"
 }) }}
 </section>
 
